@@ -20,7 +20,7 @@ local config = {
         {"Title foreground", GUI.WINDOW_TITLE_TEXT_COLOR}
     },
 
-    titleLabel = "MineBash Terminal",
+    titleLabel = "Терминал mineBASH",
     backgroundTransparency = 0,
     titleTransparency = 0,
 }
@@ -41,12 +41,12 @@ local configPath = currentScriptPath .. "Config.cfg"
 local function bootstrap()
     filesystem.remove(currentScriptPath .. "rootfs")
     local workspace = system.getWorkspace()
-    local container = GUI.addBackgroundContainer(workspace, true, true, "Downloading")
+    local container = GUI.addBackgroundContainer(workspace, true, true, "Загрузка образа подсистемы: mineCORE_1.0_SYSTEM.pkg")
     local progressBar = container.layout:addChild(GUI.progressBar(1, 1, 40, 0x66DB80, 0x0, 0xE1E1E1, 0, true, true, "", "%"))
     workspace:draw()
 
     if not component.list("internet")() then
-        return GUI.alert("No component internet available"), container:remove()
+        return GUI.alert("В вашем устройстве отсутствует интернет-подключение."), container:remove()
     end
 
     local function download(url, path, progressHandler)
@@ -77,7 +77,7 @@ local function bootstrap()
                             end
                         else
                             handle:close()
-                            return false, "Write failed: " .. reason
+                            return false, "Ошибка записи: " .. reason
                         end
                     else
                         handle:close()
@@ -86,10 +86,10 @@ local function bootstrap()
                 end
             end
 
-            return false, "Download failed: " .. reason
+            return false, "Ошибка загрузки: " .. reason
         end
         
-        return false, "Open failed: " .. reason
+        return false, "Ошибка при открытии файла: " .. reason
     end
 
     local result, reason = download("https://github.com/vberezinbadger/minebash/blob/main/rootfs.pkg?raw=true", currentScriptPath .. "Temp.pkg", function(progress)
@@ -104,7 +104,7 @@ local function bootstrap()
     end
     
     progressBar:remove()
-    container.label.text = "Almost done"
+    container.label.text = "Мы почти закончили настройку подсистемы. Пожалуйста, подождите..."
     workspace:draw()
     local result, reason = require("Compressor").unpack(currentScriptPath .. "Temp.pkg", currentScriptPath)
     filesystem.remove(currentScriptPath .. "Temp.pkg")
@@ -163,23 +163,23 @@ end
 
 local windowsContainer = system.getWindowsContainer()
 
-local properties = menu:addContextMenuItem("Properties")
-properties:addItem("Color scheme").onTouch = function()
+local properties = menu:addContextMenuItem("Параметры оконного процесса")
+properties:addItem("Цветовая схема").onTouch = function()
     local container = GUI.addBackgroundContainer(workspace, true, false)
     local pickerWidth, separatorWidth = math.floor(container.width / #config.colorScheme * 0.6), 3
     local startX, startY = math.floor(container.width / 2 - ((pickerWidth + separatorWidth) * #config.colorScheme) / 2) + separatorWidth, math.floor(container.height / 2 - 3)
-    container:addChild(GUI.label(1, startY, container.width, 1, 0xFFFFFF, "Color scheme")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_TOP)
+    container:addChild(GUI.label(1, startY, container.width, 1, 0xFFFFFF, "Цветовая схема")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_TOP)
     startY = startY + 3
 
     for i = 1, #config.colorScheme do
         if i == 1 then
-            container:addChild(GUI.slider(startX, startY + 4, pickerWidth, 0x66DB80, 0x1e1e1e, 0xFFFFFF, 0xAAAAAA, 0, 100, config.backgroundTransparency * 100, false, "Transparency ", " %")).onValueChanged = function(workspace, slider)
+            container:addChild(GUI.slider(startX, startY + 4, pickerWidth, 0x66DB80, 0x1e1e1e, 0xFFFFFF, 0xAAAAAA, 0, 100, config.backgroundTransparency * 100, false, "Прозрачность ", " %")).onValueChanged = function(workspace, slider)
                 config.backgroundTransparency = slider.value / 100
                 updateColors()
                 filesystem.writeTable(configPath, config)
             end
         elseif i == 3 then
-            container:addChild(GUI.slider(startX, startY + 4, pickerWidth, 0x66DB80, 0x1e1e1e, 0xFFFFFF, 0xAAAAAA, 0, 100, config.titleTransparency * 100, false, "Transparency ", " %")).onValueChanged = function(workspace, slider)
+            container:addChild(GUI.slider(startX, startY + 4, pickerWidth, 0x66DB80, 0x1e1e1e, 0xFFFFFF, 0xAAAAAA, 0, 100, config.titleTransparency * 100, false, "Прозрачность ", " %")).onValueChanged = function(workspace, slider)
                 config.titleTransparency = slider.value / 100
                 updateColors()
                 filesystem.writeTable(configPath, config)
@@ -197,13 +197,13 @@ properties:addItem("Color scheme").onTouch = function()
     end
 end
 
-properties:addItem("Terminal").onTouch = function()
+properties:addItem("Терминал").onTouch = function()
     local container = GUI.addBackgroundContainer(workspace, true, false)
     local startX, startY = math.floor(container.width / 2 - 15), math.floor(container.height / 2 - 3)
-    container:addChild(GUI.label(1, startY, container.width, 1, 0xFFFFFF, "Terminal")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_TOP)
+    container:addChild(GUI.label(1, startY, container.width, 1, 0xFFFFFF, "Терминал")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_TOP)
     startY = startY + 3
 
-    local titleBar = container:addChild(GUI.switchAndLabel(startX, startY, 29, 8, 0x66DB80, 0x2D2D2D, 0xE1E1E1, 0x878787, "Title bar:", config.title))
+    local titleBar = container:addChild(GUI.switchAndLabel(startX, startY, 29, 8, 0x66DB80, 0x2D2D2D, 0xE1E1E1, 0x878787, "Панель быстрых опций:", config.title))
     titleBar.switch.onStateChanged = function()
         config.title = titleBar.switch.state
 
@@ -233,7 +233,7 @@ properties:addItem("Terminal").onTouch = function()
     end
 
     startY = startY + 3
-    container:addChild(GUI.text(startX, startY, 0x878787, "Resolution: "))
+    container:addChild(GUI.text(startX, startY, 0x878787, "Размер окна mineBASH: "))
     local width = container:addChild(GUI.input(startX + 13, startY, 6, 1, 0xEEEEEE, 0x555555, 0x999999, 0xFFFFFF, 0x2D2D2D, window.gpu.temp.width, nil, true))
     width.validator = function(text)
         local width = tonumber(text)
@@ -245,7 +245,7 @@ properties:addItem("Terminal").onTouch = function()
         if #tostring(text) > 0 and width and (width >= 1 and width <= workspace.width) then
             return true
         end
-        GUI.alert("Invalid width")
+        GUI.alert("Неподдерживаемая ширина окна. Задайте другую.")
     end
     width.onInputFinished = function()
         local width = math.floor(tonumber(width.text))
@@ -267,7 +267,7 @@ properties:addItem("Terminal").onTouch = function()
         if #tostring(text) > 0 and height and (height >= 1 and height <= windowsContainer.height - (window.titleBar.hidden and 0 or 1)) then
             return true
         end
-        GUI.alert("Invalid height")
+        GUI.alert("Неподдерживаемая высота окна. Задайте другую.")
     end
     height.onInputFinished = function()
         local height = math.floor(tonumber(height.text))
@@ -279,15 +279,15 @@ properties:addItem("Terminal").onTouch = function()
 end
 properties:addSeparator()
 
-menu:addItem("Hotkeys").onTouch = function()
-    local container = GUI.addBackgroundContainer(workspace, true, true, "Hotkeys")
+menu:addItem("Горячие клавиши").onTouch = function()
+    local container = GUI.addBackgroundContainer(workspace, true, true, "Горячие клавиши")
     
     local help = {
-        "ALT - pass 'drag' event",
+        "ALT+ЛКМ - перетаскивание элементов внутри подсистемы",
         " ",
-        "CTRL+E - close editor",
+        "CTRL+E - закрыть текстовый редактор",
         " ",
-        "CTRL+SHIFT+C - interrupt"
+        "CTRL+SHIFT+C - принудительно завершить mineBASH"
     }
 
     local textBox = container.layout:addChild(GUI.textBox(1, 1, 60, #help, nil, 0xB4B4B4, help, 1, 0, 0, false, false))
@@ -301,7 +301,7 @@ end
 
 local container = box.createContainer()
 
-properties:addItem("Reset MineBash").onTouch = function()
+properties:addItem("Переустановить mineCORE").onTouch = function()
     if bootstrap() then
         local success, reason = container:bootstrap()
 
