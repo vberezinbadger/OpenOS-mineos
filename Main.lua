@@ -203,7 +203,7 @@ properties:addItem("Терминал").onTouch = function()
     container:addChild(GUI.label(1, startY, container.width, 1, 0xFFFFFF, "Терминал")):setAlignment(GUI.ALIGNMENT_HORIZONTAL_CENTER, GUI.ALIGNMENT_VERTICAL_TOP)
     startY = startY + 3
 
-    local titleBar = container:addChild(GUI.switchAndLabel(startX, startY, 29, 8, 0x66DB80, 0x2D2D2D, 0xE1E1E1, 0x878787, "Панель быстрых опций:", config.title))
+    local titleBar = container:addChild(GUI.switchAndLabel(startX, startY, 29, 8, 0x66DB80, 0x2D2D2D, 0xE1E1E1, 0x878787, "Заголовок окна:", config.title))
     titleBar.switch.onStateChanged = function()
         config.title = titleBar.switch.state
 
