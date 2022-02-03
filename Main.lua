@@ -41,7 +41,7 @@ local configPath = currentScriptPath .. "Config.cfg"
 local function bootstrap()
     filesystem.remove(currentScriptPath .. "rootfs")
     local workspace = system.getWorkspace()
-    local container = GUI.addBackgroundContainer(workspace, true, true, "Загрузка образа подсистемы: mineCORE_2.0_subsystem.pkg")
+    local container = GUI.addBackgroundContainer(workspace, true, true, "Загрузка образа подсистемы: mineCORE_1.0_SYSTEM.pkg")
     local progressBar = container.layout:addChild(GUI.progressBar(1, 1, 40, 0x66DB80, 0x0, 0xE1E1E1, 0, true, true, "", "%"))
     workspace:draw()
 
@@ -92,7 +92,7 @@ local function bootstrap()
         return false, "Ошибка при открытии файла: " .. reason
     end
 
-    local result, reason = download("https://github.com/vberezinbadger/mineBASH/blob/main/rootfs.pkg", currentScriptPath .. "Temp.pkg", function(progress)
+    local result, reason = download("https://github.com/vberezinbadger/minebash/blob/main/rootfs.pkg?raw=true", currentScriptPath .. "Temp.pkg", function(progress)
         progressBar.value = progress
         workspace:draw()
     end)
