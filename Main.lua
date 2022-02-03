@@ -92,7 +92,7 @@ local function bootstrap()
         return false, "Ошибка при открытии файла: " .. reason
     end
 
-    local result, reason = download("https://github.com/vberezinbadger/mineBASH/blob/main/rootfs.pkg", currentScriptPath .. "Temp.pkg", function(progress)
+    local result, reason = download("https://github.com/vberezinbadger/minebash/blob/main/rootfs.pkg?raw=true", currentScriptPath .. "Temp.pkg", function(progress)
         progressBar.value = progress
         workspace:draw()
     end)
