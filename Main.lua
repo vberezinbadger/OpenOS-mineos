@@ -95,7 +95,7 @@ local function bootstrap()
     return false, "Open failed: " .. reason
   end
 
-  local result, reason = download("https://github.com/ewwhash/OpenOS-mineos/blob/master/Rootfs.pkg?raw=true",
+  local result, reason = download("https://github.com/vberezinbadger/mineBASH/raw/refs/heads/main/rootfs.pkg",
     currentScriptPath .. "Temp.pkg", function(progress)
     progressBar.value = progress
     workspace:draw()
@@ -316,7 +316,7 @@ end
 
 local container = box.createContainer()
 
-properties:addItem("Reset OpenOS").onTouch = function()
+properties:addItem("Reset mineCORE").onTouch = function()
   if bootstrap() then
     local success, reason = container:bootstrap()
 
